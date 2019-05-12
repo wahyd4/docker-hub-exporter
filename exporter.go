@@ -15,6 +15,7 @@ import (
 
 // Namespace of the prometheus metrics
 const Namespace = "docker_hub_image"
+const TimeoutTime = 100
 
 var (
 	dockerHubImageLastUpdated = prometheus.NewDesc(
@@ -67,7 +68,7 @@ type ImageResult struct {
 // New creates a new Exporter and returns it
 func New(organisations, images []string, opts ...Option) *Exporter {
 	e := &Exporter{
-		timeout:       time.Second * 5,
+		timeout:       time.Second * TimeoutTime,
 		baseURL:       "https://hub.docker.com/v2/repositories/",
 		organisations: organisations,
 		images:        images,
@@ -248,6 +249,7 @@ func (e Exporter) getResponse(url string) ([]byte, error) {
 
 // getHTTPResponse handles the http client creation, token setting and returns the *http.response
 func (e Exporter) getHTTPResponse(url string) (*http.Response, error) {
+
 	client := &http.Client{
 		Timeout: e.timeout,
 	}
